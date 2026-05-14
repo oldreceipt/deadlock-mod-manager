@@ -1,7 +1,7 @@
 import type { LocalMod } from "@/types/mods";
-import { isInstalledModWithVpks } from "./installed-helpers";
+import { isInstalledModWithVpks, isRepairableMod } from "./installed-helpers";
 
-export type ModLibraryFilter = "all" | "enabled" | "disabled";
+export type ModLibraryFilter = "all" | "enabled" | "needsRepair" | "disabled";
 
 export function filterStableLibraryModsByStatus(
   mods: LocalMod[],
@@ -10,8 +10,12 @@ export function filterStableLibraryModsByStatus(
   switch (filter) {
     case "enabled":
       return mods.filter(isInstalledModWithVpks);
+    case "needsRepair":
+      return mods.filter(isRepairableMod);
     case "disabled":
-      return mods.filter((mod) => !isInstalledModWithVpks(mod));
+      return mods.filter(
+        (mod) => !isInstalledModWithVpks(mod) && !isRepairableMod(mod),
+      );
     case "all":
       return mods;
   }
